@@ -1,6 +1,6 @@
 package com.example.mykiosk01
 
-class Burger(name : String, price : Double) : Food(name, price) {
+class Burger(parameters : List<Any>) : Food(parameters) {
 
     override fun displayInfo() {
         println("${name}    | W ${price} |  ")

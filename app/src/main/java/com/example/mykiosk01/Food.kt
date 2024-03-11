@@ -1,12 +1,15 @@
 package com.example.mykiosk01
 
-open class Food(eachName:String, eachPrice:Double) {
+open class Food(parameters : List<Any>) {
     var name:String = ""
     var price:Double = 0.0
+    var explanation : String = ""
 
     init{
-        name = eachName
-        price = eachPrice
+        name = parameters[0] as String
+        price = parameters[1] as Double
+        explanation = parameters[2] as String
+
 
     }
 

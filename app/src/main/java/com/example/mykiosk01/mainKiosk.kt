@@ -3,59 +3,33 @@ package com.example.mykiosk01
 import kotlinx.coroutines.selects.select
 
 fun main(){
-//    var majSelect :Int = 0
-//    var isSelect0 : Boolean = false
-//    var majOptionList = listOf('1','2','3','4','0')
-//    var subOptionList = listOf('1','2','3','4','5','0')
-
-//    lateinit var subSelect :String
 
     var numMiss : Boolean = true
+
+    var isSelect0 : Boolean = false
 
     var baskets = mutableListOf<Food>()
     //var tempFood = Food(~~)
     //baskets.add(tempFood)
 
-    baskets.add(selection())
 
-//    while (!isSelect0) {
-//        displayMajorMenu()
-//        try{
-//            majSelect = readLine()!!.toInt()
-//            if(majSelect == 0) {
-//                println("종료")
-//                isSelect0 = true
-//                break
-//            } else {
-//                subSelect = majChoiceDist(majSelect)
-//            }
-//
-//            while(subSelect == "retry"){
-//                println("선택지 중에서 다시 선택해주세요")
-//                displayMajorMenu()
-//                majSelect = readLine()!!.toInt()
-//            }
-//            while(subSelect == "return"){
-//                println("뒤로가기 선택!")
-//                displayMajorMenu()
-//                majSelect = readLine()!!.toInt()
-//                if(majSelect == 0) {
-//                    println("종료")
-//                    isSelect0 = true
-//                    break
-//                } else {
-//                    subSelect = majChoiceDist(majSelect)
-//                }
-//            }
-//        } catch(e:Exception){
-//            println("다시 선택해주세요!!")
-//        }
-//
-//
-//    }
-//
-//    println("while 탈출")
-//
+    while(!isSelect0){
+        var tempFood = selection()
+        if (tempFood?.name == "zero"){
+            println("0 선택")
+            break
+        } else if(tempFood?.name == "wrong"){
+            println("처음부터 다시 선택하세요")
+            continue //확인하기
+        } else {
+            baskets.add(tempFood!!)
+            println("정상 추가 완료")
+        }
+
+    }
+
+    println("${baskets[0].name}")
+
 
 }
 
@@ -70,23 +44,23 @@ fun displayMajorMenu(){
     println("0. 종료      | 프로그램 종료")
 }
 
-fun selection() : Food {
+fun selection() : Food? {
 
     var majSelect :Int = 0
+    var subSelect :Any = ""
     var isSelect0 : Boolean = false
-    lateinit var subSelect :Any
 
     var foods : Food
 
 
-    while (!isSelect0) {
         displayMajorMenu()
         try{
             majSelect = readLine()!!.toInt()
             if(majSelect == 0) {
                 println("종료")
-                isSelect0 = true
-                break
+                subSelect = 0
+                //isSelect0 = true
+                //break
             } else {
                 subSelect = majChoiceDist(majSelect)!!
             }
@@ -103,29 +77,40 @@ fun selection() : Food {
                 println("뒤로가기 선택!")
                 selection()
             }
-        } catch(e:Exception){
+
+        }catch(e:Exception){
             println("올바른 형식으로 다시 선택해주세요!!")
+            e.printStackTrace()
+            println(e)
         }
 
-    }
+
 
     println("while 탈출")
 
-    if(subSelect is Food){
+    if(subSelect is Food) {
         foods = subSelect
+        println("foods 추가")
+    } else if(subSelect == 0) {
+        foods = Food(listOf("zero", 0.0, "zero"))
     } else {
-        foods = Food("1", 2.0)
+        foods = Food(listOf("wrong", 0.0, "wrong"))
     }
-
     return foods
 }
 
 fun majChoiceDist(choice:Int?):Any?{
     var numMiss : Boolean = true
+    var subSelect : Any? = 0
+    var foodType : Int = 0
 
 
     return when(choice){
         1 -> {
+            numMiss = true
+            subSelect = 0
+            foodType = 0
+
             var b1list = listOf("ShackBurger",6.9,"토마토, 양상추, 쉑소스가 토핑된 치즈버거")
             var b2list = listOf("SmokeShack", 8.9, "베이컨, 체리 페퍼에 쉑소스가 토핑된 치즈버거")
             var b3list = listOf("Shroom Burger", 9.4, "몬스터 치즈와 체다 치즈로 속을 채운 베지테리안 버거")
@@ -140,32 +125,40 @@ fun majChoiceDist(choice:Int?):Any?{
             println("0. 뒤로가기        | 뒤로가기")
 
             try{
-                var subSelect = readLine()
+                subSelect = readLine()
 
-                numMiss = numMissSelect(subSelect, burgerLists)
+                foodType = subSelect?.toInt()!!
+                numMiss = numMissSelect(foodType, burgerLists)
 
                 if(numMiss == true){
                     println("Burger 선택지 중 다시 골라주세요")
+                    foodType = 0
                     majChoiceDist(1)
+
                 } else{
-                    if(subSelect?.toInt()==0){
+                    if(foodType==0){
                         return "return"
                     }
                     else{
-                        return subSelect
                     }
                 }
             } catch(e:Exception) {
                 println("올바른 형식으로 버거 종류를 선택해주세요")
             }
 
-
+            foodType = foodType - 1
             //물어보기
-            //var addCheck = askCheck(burgerLists, subSelect.toInt())
-            //if(addCheck == 1){
-            //    var tempFood = Food()
-            //    return
-        //  }
+            askCheck(burgerLists[foodType])
+
+            var tempFood = Burger(burgerLists[foodType])
+            println("$foodType")
+            println("tempfood 추가")
+            return tempFood
+
+
+
+
+
 
             //이 부분도 위랑 비슷하게 변경하기... 함수 따로 빼서
 
@@ -183,14 +176,41 @@ fun majChoiceDist(choice:Int?):Any?{
 
 }
 
-fun numMissSelect(subSelect : String?, subList : List<Any>) : Boolean{
+fun numMissSelect(subSelect : Int?, subList : List<Any>) : Boolean{
     var numMiss : Boolean = true
 
      for(i in 0..subList.size){
-         if(subSelect?.toInt()==i){
+         if(subSelect==i){
              numMiss = false
          }
      }
 
     return numMiss
+}
+
+fun askCheck(typeLists:List<Any?>){
+
+
+    println("%-15s | W %-5s | %s".format(typeLists[0], typeLists[1], typeLists[2]))
+
+    println("")
+    println("위 메뉴를 장바구니에 추가하시겠습니까?")
+
+    var temp = readLine()?.toInt()
+
+
+    when(temp){
+        1 -> {
+            println("%s 가 장바구니에 추가되었습니다".format(typeLists[0]))
+        }
+        2 -> {
+            println("Burger 선택지 중 다시 골라주세요")
+            majChoiceDist(1)
+        }
+        else -> {
+            println("1, 2 중에서 다시 선택해주세요")
+            askCheck(typeLists)
+        }
+
+    }
 }
