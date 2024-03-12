@@ -25,13 +25,18 @@ fun main(){
             var receipt = orderChoice(tempFood, baskets, currentMoney)
             if(receipt == -200.0){
                 break
-            } else { //일단 둘 다 break로...
+            } else {
+                if(currentMoney != receipt) {
+                    isFirstOrder = 0
+                    for(j in 0..baskets.size-1){
+                        baskets.removeAt(0)
+                    }
+                }
                 currentMoney = receipt
-                break
             }
         } else {
             baskets.add(tempFood!!)
-            println("정상 추가 완료")
+            //println("정상 추가 완료")
             isFirstOrder += 1
         }
         println("")
@@ -86,19 +91,19 @@ fun selection(_count: Int) : Food {
         println(e)
     }
 
-    println("selection() 탈출")
+    //println("selection() 탈출")
 
     if(subSelect is Food) {
         foods = subSelect
-        println("foods 추가")
+        //println("foods 추가")
     } else if(subSelect == 0) {
         foods = Food(listOf("zero", 0.0, "zero"))
     } else if(subSelect == "order") {
         foods = Food(listOf("order", 0.0, "order"))
-        println("order 추가")
+        //println("order 추가")
     } else if(subSelect == "retry"){
         foods = Food(listOf("retry", 0.0, "retry"))
-        println("뒤로가기 선택 2")
+        //println("뒤로가기 선택 2")
     } else {
         foods = Food(listOf("wrong", 0.0, "wrong"))
     }
@@ -106,15 +111,10 @@ fun selection(_count: Int) : Food {
 }
 
 fun majChoiceDist(choice:Int?):Any?{
-    //var numMiss : Boolean = true
-    //var subSelect : Any? = 0
     var foodType : Int = 0
-
 
     return when(choice){
         1 -> {
-            //numMiss = true
-            //subSelect = 0
             foodType = 0
 
             var b1list = listOf("ShackBurger", 6.9, "토마토, 양상추, 쉑소스가 토핑된 치즈버거")
@@ -128,31 +128,15 @@ fun majChoiceDist(choice:Int?):Any?{
             for (i in burgerLists.indices) {
                 println(
                     "%s. %-15s | W %-5s | %s".format(
-                        i + 1,
-                        burgerLists[i][0],
-                        burgerLists[i][1],
-                        burgerLists[i][2]
+                        i + 1, burgerLists[i][0], burgerLists[i][1], burgerLists[i][2]
                     )
                 )
             }
             println("0. 뒤로가기        | 뒤로가기")
 
             try {
- //               //subSelect = readLine()
-//                foodType = subSelect?.toInt()!!
-
                 foodType = checkNumNull(burgerLists.size+1, 0)
 
-//                numMiss = numMissSelect(foodType, burgerLists)
-
- //               while (numMiss == true) {
-   //                 println("Burger 선택지 중 다시 골라주세요")
-                    //foodType = checkNumNull()
-//                    foodType = readLine()?.toInt()!!
-     //               numMiss = numMissSelect(foodType, burgerLists)
-
-
- //               }
                 if (foodType == 0) {
                     return "return"
                 }
@@ -162,25 +146,18 @@ fun majChoiceDist(choice:Int?):Any?{
             }
 
             foodType = foodType - 1
-            //물어보기
-            askCheck(burgerLists[foodType])
+            if(askCheck(burgerLists[foodType])=="retry"){
+                //println("burger 장바구니 직전 취소")
+                return "retry"
+            }
 
             var tempFood = Burger(burgerLists[foodType])
-            println("$foodType")
-            println("tempfood 추가")
+            //println("$foodType")
+            //println("tempfood 추가")
             return tempFood
 
-
-            //이 부분도 위랑 비슷하게 변경하기... 함수 따로 빼서
-
         }
-        //5 -> {
-        //    println("5 입력")
-        //    return "order"
-        //}
         2 -> {
-            //numMiss = true
-            //subSelect = 0
             foodType = 0
 
             var fc1list = listOf("frozen custard 1", 1.2, "첫번째 fc")
@@ -195,52 +172,35 @@ fun majChoiceDist(choice:Int?):Any?{
             for (i in fcsLists.indices) {
                 println(
                     "%s. %-15s | W %-5s | %s".format(
-                        i + 1,
-                        fcsLists[i][0],
-                        fcsLists[i][1],
-                        fcsLists[i][2]
+                        i + 1, fcsLists[i][0], fcsLists[i][1], fcsLists[i][2]
                     )
                 )
             }
             println("0. 뒤로가기        | 뒤로가기")
 
             try {
-                //               //subSelect = readLine()
-//                foodType = subSelect?.toInt()!!
-
                 foodType = checkNumNull(fcsLists.size+1, 0)
 
-//                numMiss = numMissSelect(foodType, burgerLists)
-
-                //               while (numMiss == true) {
-                //                 println("Burger 선택지 중 다시 골라주세요")
-                //foodType = checkNumNull()
-//                    foodType = readLine()?.toInt()!!
-                //               numMiss = numMissSelect(foodType, burgerLists)
-
-
-                //               }
                 if (foodType == 0) {
                     return "return"
                 }
 
             } catch (e: Exception) {
-                println("올바른 형식으로 맥주 종류를 선택해주세요")
+                println("올바른 형식으로 custard 종류를 선택해주세요")
             }
 
             foodType = foodType - 1
-            //물어보기
-            askCheck(fcsLists[foodType])
+            if(askCheck(fcsLists[foodType])=="retry"){
+                //println("custard 장바구니 직전 취소")
+                return "retry"
+            }
 
             var tempFood = FrozenCustard(fcsLists[foodType])
-            println("$foodType")
-            println("frozen custard tempfood 추가")
+            //println("$foodType")
+            //println("frozen custard tempfood 추가")
             return tempFood
-
         }
         3 -> {
-            //numMiss = true
-            //subSelect = 0
             foodType = 0
 
             var dr1list = listOf("drink 1", 1.2, "첫번째 drink")
@@ -253,52 +213,36 @@ fun majChoiceDist(choice:Int?):Any?{
             for (i in drsLists.indices) {
                 println(
                     "%s. %-15s | W %-5s | %s".format(
-                        i + 1,
-                        drsLists[i][0],
-                        drsLists[i][1],
-                        drsLists[i][2]
+                        i + 1, drsLists[i][0], drsLists[i][1], drsLists[i][2]
                     )
                 )
             }
             println("0. 뒤로가기        | 뒤로가기")
 
             try {
-                //               //subSelect = readLine()
-//                foodType = subSelect?.toInt()!!
-
                 foodType = checkNumNull(drsLists.size+1, 0)
 
-//                numMiss = numMissSelect(foodType, burgerLists)
-
-                //               while (numMiss == true) {
-                //                 println("Burger 선택지 중 다시 골라주세요")
-                //foodType = checkNumNull()
-//                    foodType = readLine()?.toInt()!!
-                //               numMiss = numMissSelect(foodType, burgerLists)
-
-
-                //               }
                 if (foodType == 0) {
                     return "return"
                 }
 
             } catch (e: Exception) {
-                println("올바른 형식으로 맥주 종류를 선택해주세요")
+                println("올바른 형식으로 drink 종류를 선택해주세요")
             }
 
             foodType = foodType - 1
-            //물어보기
-            askCheck(drsLists[foodType])
+            if(askCheck(drsLists[foodType])=="retry"){
+                //println("drink 장바구니 직전 취소")
+                return "retry"
+            }
 
             var tempFood = Drink(drsLists[foodType])
-            println("$foodType")
-            println("drink tempfood 추가")
+            //println("$foodType")
+            //println("drink tempfood 추가")
             return tempFood
         }
 
         else -> { //4
-            //numMiss = true
-            //subSelect = 0
             foodType = 0
 
             var be1list = listOf("beer1", 1.2, "첫번째 맥주")
@@ -312,31 +256,14 @@ fun majChoiceDist(choice:Int?):Any?{
             for (i in beersLists.indices) {
                 println(
                     "%s. %-15s | W %-5s | %s".format(
-                        i + 1,
-                        beersLists[i][0],
-                        beersLists[i][1],
-                        beersLists[i][2]
+                        i + 1, beersLists[i][0], beersLists[i][1], beersLists[i][2]
                     )
                 )
             }
             println("0. 뒤로가기        | 뒤로가기")
 
             try {
-                //               //subSelect = readLine()
-//                foodType = subSelect?.toInt()!!
-
                 foodType = checkNumNull(beersLists.size+1, 0)
-
-//                numMiss = numMissSelect(foodType, burgerLists)
-
-                //               while (numMiss == true) {
-                //                 println("Burger 선택지 중 다시 골라주세요")
-                //foodType = checkNumNull()
-//                    foodType = readLine()?.toInt()!!
-                //               numMiss = numMissSelect(foodType, burgerLists)
-
-
-                //               }
                 if (foodType == 0) {
                     return "return"
                 }
@@ -346,58 +273,41 @@ fun majChoiceDist(choice:Int?):Any?{
             }
 
             foodType = foodType - 1
-            //물어보기
-            askCheck(beersLists[foodType])
+            if(askCheck(beersLists[foodType])=="retry"){
+                //println("beer 장바구니 직전 취소")
+                return "retry"
+            }
 
             var tempFood = Beer(beersLists[foodType])
-            println("$foodType")
-            println("beer tempfood 추가")
+            //println("$foodType")
+            //println("beer tempfood 추가")
             return tempFood
         }
-
     }
-
-
 }
 
-fun numMissSelect(subSelect : Int?, subList : List<Any>) : Boolean{
-    var numMiss : Boolean = true
+fun askCheck(typeLists:List<Any?>) : String?{
 
-     for(i in 0..subList.size){
-         if(subSelect==i){
-             numMiss = false
-         }
-     }
-
-    return numMiss
-}
-
-fun askCheck(typeLists:List<Any?>){
-
-
+    var sentence : String = ""
     println("%-15s | W %-5s | %s".format(typeLists[0], typeLists[1], typeLists[2]))
 
     println("")
     println("위 메뉴를 장바구니에 추가하시겠습니까?")
     println("1. 확인 \t 2. 취소")
 
-    var temp = readLine()?.toInt()
-
+    var temp = checkNumNull(2,1)
 
     when(temp){
         1 -> {
-            println("%s 가 장바구니에 추가되었습니다".format(typeLists[0]))
+            sentence = "%s 가 장바구니에 추가되었습니다".format(typeLists[0])
+            println(sentence)
         }
         2 -> {
-            println("Burger 선택지 중 다시 골라주세요")
-            majChoiceDist(1)
+            //println("장바구니 담기 취소")
+            sentence = "retry"
         }
-        else -> {
-            println("1, 2 중에서 다시 선택해주세요")
-            askCheck(typeLists)
-        }
-
     }
+    return sentence
 }
 
 fun checkNumNull(_size : Int, _startNum : Int): Int {
@@ -424,11 +334,10 @@ fun checkNumNull(_size : Int, _startNum : Int): Int {
             if (numNullResult == null) {
                 println("다시 입력해주세요")
             } else {
-                println("입력한 숫자는 $numNullResult 입니다.")
+                //println("입력한 숫자는 $numNullResult 입니다.")
             }
         }
     }
-
     return numNullResult
 }
 
@@ -455,7 +364,6 @@ fun orderChoice(_tempFood : Food, _baskets : List<Food>, _currentMoney:Double) :
 
     var userOrderChoice = askOrder()
     if(userOrderChoice == 1){
-        //가격 비교, 구매 함수 or 가격 리턴하기
         if(_currentMoney > price){
             println("구매 완료, 현재 잔액 : %.1f".format(_currentMoney-price))
             return _currentMoney-price
@@ -463,11 +371,7 @@ fun orderChoice(_tempFood : Food, _baskets : List<Food>, _currentMoney:Double) :
             println("현재 잔액은 %.1f으로 %.1f이 부족해서 주문할 수 없습니다.".format(_currentMoney, price-_currentMoney))
             return -200.0
         }
-
     } else{
         return _currentMoney
     }
-
-
-
 }
