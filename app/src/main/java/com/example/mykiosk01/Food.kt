@@ -14,7 +14,7 @@ open class Food(parameters : List<Any>) {
     }
 
     open fun displayInfo(){
-
+        println("%-15s | W %-5s | %s ".format(name, price, explanation))
     }
 
 
