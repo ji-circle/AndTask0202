@@ -8,7 +8,6 @@ fun main(){
     var isSelect0 : Boolean = false
     var isFirstOrder : Int = 0
     var baskets = mutableListOf<Food>()
-    //var price : Double = 0.0
     var currentMoney : Double = 0.0
 
     currentMoney = 100.0
@@ -21,14 +20,14 @@ fun main(){
             break
         } else if(tempFood?.name == "wrong" ||tempFood?.name == "retry") {
             println("처음부터 다시 선택하세요")
-            //continue //확인하기
         }else if(tempFood?.name == "order"){
 
             var receipt = orderChoice(tempFood, baskets, currentMoney)
             if(receipt == -200.0){
                 break
-            } else {
+            } else { //일단 둘 다 break로...
                 currentMoney = receipt
+                break
             }
         } else {
             baskets.add(tempFood!!)
@@ -36,20 +35,8 @@ fun main(){
             isFirstOrder += 1
         }
         println("")
-
     }
-
-//    for(i in 0..baskets.size-1){
-//        println("${baskets[i].name}")
-//        println("${baskets[i].price}")
-//        println("${baskets[i].explanation}")
-//    }
-
-
-
 }
-
-
 
 fun displayMajorMenu(){
     println("\"SHAKESHACK BURGER 에 오신걸 환영합니다\"")
@@ -71,10 +58,8 @@ fun selection(_count: Int) : Food {
 
     var majSelect :Int = 0
     var subSelect :Any = ""
-    //var isSelect0 : Boolean = false
 
     var foods : Food
-
 
     displayMajorMenu()
     if(_count > 0){
@@ -95,26 +80,11 @@ fun selection(_count: Int) : Food {
         }else {
             subSelect = majChoiceDist(majSelect)!!
         }
-        //while(subSelect == "retry"){
-        //    println("대분류 선택지 중에서 다시 선택해주세요")
-//            displayMajorMenu()
-//            majSelect = readLine()!!.toInt()
-        //    selection(_count)
-
-        //WHILE 들에 갇힌 거 아닌지 확인하기. 아니면 IF로 바꾸기!
-        //}
-//
-//        if(subSelect == "return"){
-//            println("뒤로가기 선택!")
-//            selection(_count)
-//        }
     }catch(e:Exception){
         println("올바른 형식으로 다시 선택해주세요!!")
         e.printStackTrace()
         println(e)
     }
-
-
 
     println("selection() 탈출")
 
@@ -136,15 +106,15 @@ fun selection(_count: Int) : Food {
 }
 
 fun majChoiceDist(choice:Int?):Any?{
-    var numMiss : Boolean = true
-    var subSelect : Any? = 0
+    //var numMiss : Boolean = true
+    //var subSelect : Any? = 0
     var foodType : Int = 0
 
 
     return when(choice){
         1 -> {
-            numMiss = true
-            subSelect = 0
+            //numMiss = true
+            //subSelect = 0
             foodType = 0
 
             var b1list = listOf("ShackBurger", 6.9, "토마토, 양상추, 쉑소스가 토핑된 치즈버거")
@@ -209,8 +179,8 @@ fun majChoiceDist(choice:Int?):Any?{
         //    return "order"
         //}
         2 -> {
-            numMiss = true
-            subSelect = 0
+            //numMiss = true
+            //subSelect = 0
             foodType = 0
 
             var fc1list = listOf("frozen custard 1", 1.2, "첫번째 fc")
@@ -269,8 +239,8 @@ fun majChoiceDist(choice:Int?):Any?{
 
         }
         3 -> {
-            numMiss = true
-            subSelect = 0
+            //numMiss = true
+            //subSelect = 0
             foodType = 0
 
             var dr1list = listOf("drink 1", 1.2, "첫번째 drink")
@@ -327,8 +297,8 @@ fun majChoiceDist(choice:Int?):Any?{
         }
 
         else -> { //4
-            numMiss = true
-            subSelect = 0
+            //numMiss = true
+            //subSelect = 0
             foodType = 0
 
             var be1list = listOf("beer1", 1.2, "첫번째 맥주")
