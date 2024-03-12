@@ -4,6 +4,11 @@ import kotlinx.coroutines.selects.select
 import java.util.InputMismatchException
 import java.util.Scanner
 
+//질문 1) java처럼 scanner을 사용했는데, readLine에서 nextInt처럼 int만 받게 하는 방법이 있나요?
+//질문 2) 객체를 리턴하기도 하고 문자열을 리턴하기도 해서 Any 를 많이 사용했는데, 이렇게 하는 것과
+//          selection() 함수의 마지막 부분처럼 객체에 메세지를 넣어서 만든 뒤 리턴해 판별하는 것 중에
+//              뭐가 더 나은 방법인가요? (사실 둘 다 비효율적인 것 같아서요... 더 효율적인 방법을 알고 싶습니다)
+
 fun main(){
     var isSelect0 : Boolean = false
     var isFirstOrder : Int = 0
