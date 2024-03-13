@@ -1,8 +1,18 @@
 package com.example.mykiosk01
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.selects.select
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.InputMismatchException
 import java.util.Scanner
+
+
 
 //질문 1) java처럼 scanner을 사용했는데, readLine에서 nextInt처럼 int만 받게 하는 방법이 있나요?
 //질문 2) 객체를 리턴하기도 하고 문자열을 리턴하기도 해서 Any 를 많이 사용했는데, 이렇게 하는 것과
@@ -348,35 +358,90 @@ fun checkNumNull(_size : Int, _startNum : Int): Int {
 
 fun orderChoice(_tempFood : Food, _baskets : List<Food>, _currentMoney:Double) : Double {
     var price : Double = 0.0
-    println("아래와 같이 주문 하시겠습니까?")
-    println("")
-    println("[ Orders ]")
-    for(i in _baskets.indices){
-        _baskets[i].displayInfo()
-    }
-    for(i in 0.._baskets.size-1){
-        price += _baskets[i].price
-    }
-    println("")
-    println("[ Total ]")
-    println("W %.1f".format(price))
+    var returnValue : Double = 0.0
 
-    fun askOrder() : Int{
-        println("1. 주문 \t 2. 메뉴판")
-        var userOrderChoice = checkNumNull(2,1)
-        return userOrderChoice
-    }
+    val currentDateTime = LocalDateTime.now()
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+    val formattedDateTime = currentDateTime.format(formatter)
 
-    var userOrderChoice = askOrder()
-    if(userOrderChoice == 1){
-        if(_currentMoney > price){
-            println("구매 완료, 현재 잔액 : %.1f".format(_currentMoney-price))
-            return _currentMoney-price
-        } else{
-            println("현재 잔액은 %.1f으로 %.1f이 부족해서 주문할 수 없습니다.".format(_currentMoney, price-_currentMoney))
-            return -200.0
+    var isTimeOk : Boolean = true
+
+    while(isTimeOk){
+        price = 0.0
+        println("아래와 같이 주문 하시겠습니까?")
+        println("")
+        println("[ Orders ]")
+        for(i in _baskets.indices){
+            _baskets[i].displayInfo()
         }
-    } else{
-        return _currentMoney
+        for(i in 0.._baskets.size-1){
+            price += _baskets[i].price
+        }
+        println("")
+        println("[ Total ]")
+        println("W %.1f".format(price))
+
+        fun askOrder() : Int{
+            println("1. 주문 \t 2. 메뉴판")
+            var userOrderChoice = checkNumNull(2,1)
+            return userOrderChoice
+        }
+
+        var userOrderChoice = askOrder()
+        if(userOrderChoice == 1){
+
+            if(!checkTimeOk()){
+                continue
+            }
+
+            else{
+                if(_currentMoney > price){
+                    //3초 기다리기
+                    var job = CoroutineScope(Dispatchers.Default).launch {
+                        delay(3000)
+                        println("결제중")
+                    }
+                    runBlocking {
+                        job.join()
+                    }
+                    println("구매 완료, 현재 잔액 : %.1f (%s)".format(_currentMoney-price, formattedDateTime))
+                    returnValue = _currentMoney-price
+                    //println("3초 딜레이 후 결제 완료")
+                    job.cancel()
+                    break
+                } else{
+                    println("현재 잔액은 %.1f으로 %.1f이 부족해서 주문할 수 없습니다.".format(_currentMoney, price-_currentMoney))
+                    returnValue = -200.0
+                    break
+                }
+            }
+        } else{
+            returnValue= _currentMoney
+            break
+        }
     }
+    return returnValue
+}
+
+fun checkTimeOk() : Boolean {
+    val currentTime = LocalTime.now()
+    var formatter = DateTimeFormatter.ofPattern("a HH시 mm분")
+    var formatted = currentTime.format(formatter)
+
+    val start = LocalTime.of(13, 45) // 1:45 PM
+    val end = LocalTime.of(14, 10) // 1:59 PM
+
+    var formatted2 = start.format(formatter)
+    var formatted3 = end.format(formatter)
+
+    val result = when {
+        currentTime.compareTo(start) >= 0 && currentTime.compareTo(end) <= 0 -> false
+        else -> true
+    }
+    if(result == false){
+        println("현재 시각은 $formatted 입니다. ")
+        println("은행 점검 시간은 $formatted2 ~ $formatted3 이므로 결제할 수 없습니다.")
+    }
+
+    return result
 }
