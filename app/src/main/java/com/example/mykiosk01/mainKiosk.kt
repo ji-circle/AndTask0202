@@ -341,7 +341,7 @@ fun checkNumNull(_size : Int, _startNum : Int): Int {
             }
             if(!isRangeOk){
                 println("범위 밖 선택지를 골랐습니다.")
-                numNullResult = null //이렇게 말고 다른 방법 없나
+                numNullResult = null //이렇게 null 넣는 거 말고 다른 방법 없나
             }
         } catch (e: NumberFormatException) {
             println("숫자를 입력해주세요.")
@@ -365,10 +365,8 @@ fun orderChoice(_tempFood : Food, _baskets : List<Food>, _currentMoney:Double) :
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
     val formattedDateTime = currentDateTime.format(formatter)
 
-    var isBannedTime : Boolean = false
-
-    while(!isBannedTime){
-        price = 0.0
+    while(true){
+        price = 0.0 //초기화해야 중복적용 안 됨
         println("아래와 같이 주문 하시겠습니까? (현재 주문 대기수 : $numBanned)")
         println("")
         println("[ Orders ]")
@@ -428,10 +426,9 @@ fun checkTimeBanned() : Boolean{
     val currentTime = LocalTime.now()
     var formatter = DateTimeFormatter.ofPattern("a HH시 mm분")
     var formatted = currentTime.format(formatter)
-    ////////////////////////////
 
-    val start = LocalTime.of(13, 45) // 1:45 PM
-    val end = LocalTime.of(14, 47) // 1:59 PM
+    val start = LocalTime.of(23, 10) // 11:10 PM
+    val end = LocalTime.of(23, 59) // 11:59 PM
 
     var formatted2 = start.format(formatter)
     var formatted3 = end.format(formatter)
