@@ -359,16 +359,17 @@ fun checkNumNull(_size : Int, _startNum : Int): Int {
 fun orderChoice(_tempFood : Food, _baskets : List<Food>, _currentMoney:Double) : Double {
     var price : Double = 0.0
     var returnValue : Double = 0.0
+    var numBanned : Int = 0
 
     val currentDateTime = LocalDateTime.now()
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
     val formattedDateTime = currentDateTime.format(formatter)
 
-    var isTimeOk : Boolean = true
+    var isBannedTime : Boolean = false
 
-    while(isTimeOk){
+    while(!isBannedTime){
         price = 0.0
-        println("아래와 같이 주문 하시겠습니까?")
+        println("아래와 같이 주문 하시겠습니까? (현재 주문 대기수 : $numBanned)")
         println("")
         println("[ Orders ]")
         for(i in _baskets.indices){
@@ -390,10 +391,10 @@ fun orderChoice(_tempFood : Food, _baskets : List<Food>, _currentMoney:Double) :
         var userOrderChoice = askOrder()
         if(userOrderChoice == 1){
 
-            if(!checkTimeOk()){
+            if(checkTimeBanned()){
+                numBanned += 1
                 continue
             }
-
             else{
                 if(_currentMoney > price){
                     //3초 기다리기
@@ -423,25 +424,26 @@ fun orderChoice(_tempFood : Food, _baskets : List<Food>, _currentMoney:Double) :
     return returnValue
 }
 
-fun checkTimeOk() : Boolean {
+fun checkTimeBanned() : Boolean{
     val currentTime = LocalTime.now()
     var formatter = DateTimeFormatter.ofPattern("a HH시 mm분")
     var formatted = currentTime.format(formatter)
+    ////////////////////////////
 
     val start = LocalTime.of(13, 45) // 1:45 PM
-    val end = LocalTime.of(14, 10) // 1:59 PM
+    val end = LocalTime.of(14, 47) // 1:59 PM
 
     var formatted2 = start.format(formatter)
     var formatted3 = end.format(formatter)
 
-    val result = when {
-        currentTime.compareTo(start) >= 0 && currentTime.compareTo(end) <= 0 -> false
-        else -> true
+    var result = when {
+        currentTime.compareTo(start) >= 0 && currentTime.compareTo(end) <= 0 -> true
+                //금지된 시간이라면 true, 1(횟수)를 반환
+        else -> false   //금지된 시간이 아니면 false
     }
-    if(result == false){
+    if(result){
         println("현재 시각은 $formatted 입니다. ")
         println("은행 점검 시간은 $formatted2 ~ $formatted3 이므로 결제할 수 없습니다.")
     }
-
     return result
 }
